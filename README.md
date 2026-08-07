@@ -1,4 +1,4 @@
-# 🛡️ Mod Bot v2.0
+# 🛡️ CWC Anti Kid (CWC Moderator - Bridge Chat - Auto protect 24/7)
 
 Bot moderator + anti-raid + economy cho Discord, hỗ trợ **cả prefix `!` lẫn slash command `/`** cùng lúc (không cần viết 2 lần), kèm phản hồi bằng emoji cho từng hành động.
 
