@@ -1,0 +1,10 @@
+.env
+__pycache__/
+*.pyc
+data/warnings.json
+data/guild_config.json
+data/economy.json
+data/global_bans.json
+data/bridge_channels.json
+.venv/
+venv/
