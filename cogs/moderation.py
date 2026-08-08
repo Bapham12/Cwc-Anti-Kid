@@ -19,7 +19,7 @@ class Moderation(commands.Cog):
         self.bot = bot
 
     async def react_ok(self, ctx: commands.Context, key: str = "success"):
-        """Nếu lệnh được gọi bằng prefix (!), thả reaction lên tin nhắn gốc."""
+        """Nếu lệnh được gọi bằng prefix (?), thả reaction lên tin nhắn gốc."""
         if ctx.interaction is None and ctx.message:
             try:
                 await ctx.message.add_reaction(e(key))
