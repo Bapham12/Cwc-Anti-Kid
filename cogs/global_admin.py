@@ -32,7 +32,7 @@ class GlobalAdmin(commands.Cog):
     # ===================================================================
     # GLOBAL BAN — ban 1 UID trên toàn bộ server bot đang có mặt
     # ===================================================================
-    @commands.hybrid_command(name="globalban", description="[Chủ bot] Ban 1 UID trên TẤT CẢ server bot đang có mặt")
+    @commands.command(name="globalban", description="[Chủ bot] Ban 1 UID trên TẤT CẢ server bot đang có mặt")
     @app_commands.describe(user_id="ID của user cần ban toàn cục", reason="Lý do")
     @hard_owner_check()
     async def globalban(self, ctx: commands.Context, user_id: str, *, reason: str = "Không có lý do"):
@@ -66,7 +66,7 @@ class GlobalAdmin(commands.Cog):
         )
         await ctx.send(embed=embed)
 
-    @commands.hybrid_command(name="globalunban", description="[Chủ bot] Gỡ global ban cho 1 UID")
+    @commands.command(name="globalunban", description="[Chủ bot] Gỡ global ban cho 1 UID")
     @app_commands.describe(user_id="ID của user cần gỡ global ban")
     @hard_owner_check()
     async def globalunban(self, ctx: commands.Context, user_id: str):
@@ -98,7 +98,7 @@ class GlobalAdmin(commands.Cog):
         )
         await ctx.send(embed=embed)
 
-    @commands.hybrid_command(name="globalbanlist", description="[Chủ bot] Xem danh sách UID đang bị global ban")
+    @commands.command(name="globalbanlist", description="[Chủ bot] Xem danh sách UID đang bị global ban")
     @hard_owner_check()
     async def globalbanlist(self, ctx: commands.Context):
         bans = list_global_bans()
@@ -138,7 +138,7 @@ class GlobalAdmin(commands.Cog):
     # ===================================================================
     # SERVER MANAGEMENT — tạo hàng loạt kênh + đổi tên server (chỉ owner)
     # ===================================================================
-    @commands.hybrid_command(name="createchannels", description="[Chủ bot] Tạo hàng loạt kênh trong server hiện tại")
+    @commands.command(name="createchannels", description="[Chủ bot] Tạo hàng loạt kênh trong server hiện tại")
     @app_commands.describe(
         amount="Số lượng kênh cần tạo (tối đa 100 mỗi lần)",
         name="Tên gốc cho kênh (tự đánh số nếu tạo nhiều hơn 1)",
@@ -150,7 +150,10 @@ class GlobalAdmin(commands.Cog):
     ])
     @hard_owner_check()
     @commands.bot_has_permissions(manage_channels=True)
-    async def createchannels(self, ctx: commands.Context, amount: app_commands.Range[int, 1, 100], name: str = "channel", channel_type: str = "text"):
+    async def createchannels(self, ctx: commands.Context, amount: int, name: str = "channel", channel_type: str = "text"):
+        if not 1 <= amount <= 100:
+            embed = mod_embed(f"{e('error')} Sai giá trị", "Số lượng kênh phải từ 1 đến 100.", discord.Color.red())
+            return await ctx.send(embed=embed)
         if ctx.interaction:
             await ctx.defer()
 
@@ -174,7 +177,7 @@ class GlobalAdmin(commands.Cog):
         )
         await ctx.send(embed=embed)
 
-    @commands.hybrid_command(name="deletechannel", description="[Chủ bot] Xoá 1 kênh cụ thể trực tiếp (không cần khớp tên)")
+    @commands.command(name="deletechannel", description="[Chủ bot] Xoá 1 kênh cụ thể trực tiếp (không cần khớp tên)")
     @app_commands.describe(channel="Kênh cần xoá (chọn trực tiếp, không cần gõ tên/từ khoá)")
     @hard_owner_check()
     @commands.bot_has_permissions(manage_channels=True)
@@ -197,14 +200,17 @@ class GlobalAdmin(commands.Cog):
         embed = mod_embed(f"{e('success')} Đã xoá kênh", f"Đã xoá kênh `{name}` (`{channel.id}`).", discord.Color.green())
         await ctx.send(embed=embed)
 
-    @commands.hybrid_command(name="deletechannels", description="[Chủ bot] Xoá hàng loạt kênh theo tên trong server hiện tại")
+    @commands.command(name="deletechannels", description="[Chủ bot] Xoá hàng loạt kênh theo tên trong server hiện tại")
     @app_commands.describe(
         name_contains="Từ khoá trong tên kênh cần xoá (khớp gần đúng, không phân biệt hoa thường)",
         amount="Số lượng tối đa cần xoá (mặc định 50, tối đa 50)",
     )
     @hard_owner_check()
     @commands.bot_has_permissions(manage_channels=True)
-    async def deletechannels(self, ctx: commands.Context, name_contains: str, amount: app_commands.Range[int, 1, 50] = 50):
+    async def deletechannels(self, ctx: commands.Context, name_contains: str, amount: int = 50):
+        if not 1 <= amount <= 50:
+            embed = mod_embed(f"{e('error')} Sai giá trị", "Số lượng kênh phải từ 1 đến 50.", discord.Color.red())
+            return await ctx.send(embed=embed)
         if ctx.interaction:
             await ctx.defer()
 
@@ -245,7 +251,7 @@ class GlobalAdmin(commands.Cog):
         embed.set_footer(text="Kênh hiện tại (nơi gõ lệnh) luôn được bỏ qua để tránh mất phản hồi giữa chừng.")
         await ctx.send(embed=embed)
 
-    @commands.hybrid_command(name="renameserver", description="[Chủ bot] Đổi tên server hiện tại")
+    @commands.command(name="renameserver", description="[Chủ bot] Đổi tên server hiện tại")
     @app_commands.describe(new_name="Tên mới cho server")
     @hard_owner_check()
     @commands.bot_has_permissions(manage_guild=True)
@@ -267,7 +273,7 @@ class GlobalAdmin(commands.Cog):
     # ===================================================================
     # GLOBAL ANNOUNCEMENT — gửi thông báo tới tất cả server đã add bot
     # ===================================================================
-    @commands.hybrid_command(name="globalannounce", description="[Chủ bot] Gửi thông báo tới TẤT CẢ server đã add bot")
+    @commands.command(name="globalannounce", description="[Chủ bot] Gửi thông báo tới TẤT CẢ server đã add bot")
     @app_commands.describe(message="Nội dung thông báo")
     @hard_owner_check()
     async def globalannounce(self, ctx: commands.Context, *, message: str):
@@ -357,4 +363,4 @@ class GlobalAdmin(commands.Cog):
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(GlobalAdmin(bot))
-    
+        
