@@ -145,10 +145,10 @@ class Setup(commands.Cog):
             embed = mod_embed(f"{e('error')} Kênh đã bị xoá", "Kênh thông báo không còn tồn tại. Chạy lại `setup` để tạo mới.", discord.Color.red())
             return await ctx.send(embed=embed, ephemeral=True)
 
-        announce_embed = mod_embed(f"📢 Thông báo từ {ctx.author.display_name}", message, discord.Color.gold())
+        announce_embed = mod_embed(f"📣 Thông báo từ {ctx.author.display_name}", message, discord.Color.gold())
         await channel.send(embed=announce_embed)
 
-        confirm = mod_embed(f"{e('success')} Đã gửi thông báo", f"Đã gửi vào {channel.mention}.", discord.Color.green())
+        confirm = mod_embed(f"{e('success')} Đã send thông báo", f"Đã gửi vào {channel.mention}.", discord.Color.green())
         await ctx.send(embed=confirm, ephemeral=True if ctx.interaction else False)
 
     # -----------------------------------------------------------------
