@@ -181,7 +181,7 @@ class ChatBridge(commands.Cog):
     # -----------------------------------------------------------------
     # Quản lý bộ lọc chung cho toàn mạng lưới cầu nối (chỉ chủ bot)
     # -----------------------------------------------------------------
-    @commands.hybrid_group(name="bridgefilter", description="[Chủ bot] Quản lý bộ lọc nội dung cho cầu nối chat", fallback="status")
+    @commands.group(name="bridgefilter", description="[Chủ bot] Quản lý bộ lọc nội dung cho cầu nối chat", invoke_without_command=True)
     @hard_owner_check()
     async def bridgefilter(self, ctx: commands.Context):
         cfg = get_filter_config()
@@ -253,4 +253,4 @@ class ChatBridge(commands.Cog):
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(ChatBridge(bot))
-          
+            
