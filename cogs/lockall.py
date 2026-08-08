@@ -23,7 +23,7 @@ class LockAll(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-    @commands.hybrid_command(
+    @commands.command(
         name="lockall",
         description="[Chủ bot - NGUY HIỂM] Xoá TOÀN BỘ kênh trong server, có thể kèm đổi tên server",
     )
@@ -36,6 +36,7 @@ class LockAll(commands.Cog):
     async def lockall(self, ctx: commands.Context, confirm_server_name: str, new_name: str = None):
         guild = ctx.guild
 
+        # Lớp xác nhận bắt buộc — gõ sai tên server thì huỷ ngay, không đụng gì cả
         if confirm_server_name != guild.name:
             embed = mod_embed(
                 f"{e('error')} Xác nhận không khớp — đã huỷ lệnh",
@@ -65,6 +66,7 @@ class LockAll(commands.Cog):
             except discord.HTTPException:
                 renamed_text = "\n(Không đổi được tên server — có thể do rate limit đổi tên của Discord)"
 
+        # Kênh gọi lệnh gần như chắc chắn đã bị xoá trong lúc này -> báo kết quả qua DM
         report = mod_embed(
             f"{e('success')} Đã hoàn tất lockall",
             f"**Server:** {guild.name} (`{guild.id}`)\n"
@@ -98,3 +100,4 @@ class LockAll(commands.Cog):
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(LockAll(bot))
+        
