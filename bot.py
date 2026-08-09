@@ -5,6 +5,7 @@ from discord.ext import commands
 from dotenv import load_dotenv
 
 from utils.emojis import e, load_application_emojis
+from utils.owner_check import get_configured_owner_id
 
 load_dotenv()
 
@@ -35,6 +36,15 @@ async def load_cogs():
     for cog in COGS:
         await bot.load_extension(cog)
         print(f"{e('success')} Đã load extension: {cog}")
+
+
+def _check_owner_id():
+    """In ra trạng thái BOT_OWNER_ID lúc khởi động, tự soi lỗi mà không cần đoán mù."""
+    owner_id = get_configured_owner_id()
+    if owner_id is None:
+        print(f"{e('error')} BOT_OWNER_ID chưa set hoặc sai định dạng trong .env — toàn bộ lệnh owner-only (globalban, lockall...) sẽ bị KHOÁ cho tới khi sửa đúng.")
+    else:
+        print(f"{e('success')} BOT_OWNER_ID hợp lệ: {owner_id} — lệnh owner-only chỉ UID này dùng được.")
 
 
 @bot.listen("on_ready")
@@ -71,6 +81,8 @@ async def main():
         print(f"{e('error')} Không tìm thấy DISCORD_TOKEN. Hãy tạo file .env dựa theo .env.example rồi điền token vào.")
         return
 
+    _check_owner_id()
+
     async with bot:
         await load_cogs()
         await bot.start(TOKEN)
@@ -78,4 +90,4 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
-                
+    
