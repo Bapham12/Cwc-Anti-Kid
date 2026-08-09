@@ -1,12 +1,13 @@
 """
-Tách biệt tiền tố lệnh: lệnh thường/mod dùng '!', lệnh cấp owner dùng '.'.
+Tách biệt tiền tố lệnh: lệnh thường dùng '?', lệnh cấp owner dùng '.'.
+
 Không ảnh hưởng tới slash command (/) — slash luôn hoạt động bình thường ở mọi
 trường hợp; phần phân quyền owner cho slash vẫn do hard_owner_check() lo
 (xem utils/owner_check.py), không liên quan gì tới file này.
 
 Nếu sau này thêm lệnh owner mới, nhớ thêm TÊN GỐC (root command) của lệnh đó
 vào OWNER_COMMAND_ROOTS bên dưới, nếu không lệnh đó sẽ bị coi là lệnh thường
-và chỉ nhận tiền tố '!' thay vì '.'.
+và chỉ nhận tiền tố '?' thay vì '.'.
 """
 
 from discord.ext import commands
@@ -19,7 +20,7 @@ OWNER_COMMAND_ROOTS = {
 
 
 class WrongPrefixUsage(commands.CheckFailure):
-    """Raise khi gọi lệnh bằng sai loại tiền tố (VD: gõ '.' cho lệnh thường, hoặc '!' cho lệnh owner)."""
+    """Raise khi gọi lệnh bằng sai loại tiền tố (VD: gõ '.' cho lệnh thường, hoặc '?' cho lệnh owner)."""
 
     def __init__(self, expected_prefix: str):
         self.expected_prefix = expected_prefix
@@ -31,6 +32,7 @@ def register_prefix_gate(bot: commands.Bot, normal_prefix: str, owner_prefix: st
 
     @bot.check
     async def prefix_gate(ctx: commands.Context) -> bool:
+        # Slash command không có khái niệm tiền tố -> luôn cho qua
         if ctx.interaction is not None or ctx.command is None:
             return True
 
@@ -43,3 +45,4 @@ def register_prefix_gate(bot: commands.Bot, normal_prefix: str, owner_prefix: st
         return True
 
     return prefix_gate
+    
