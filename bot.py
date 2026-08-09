@@ -9,7 +9,7 @@ from utils.owner_check import get_configured_owner_id
 
 load_dotenv()
 
-TOKEN = os.getenv("DISCORD_TOKEN")
+TOKEN = (os.getenv("DISCORD_TOKEN") or "").strip()
 NORMAL_PREFIX = os.getenv("NORMAL_PREFIX", "!")   # Member & mod dùng tiền tố này
 OWNER_PREFIX = os.getenv("OWNER_PREFIX", ".")      # Chỉ chủ bot dùng tiền tố này
 
@@ -76,9 +76,17 @@ async def on_ready_setup():
             print(f"{e('error')} Lỗi khi sync slash command: {ex}")
 
 
+def _has_valid_token_format(token: str) -> bool:
+    """Chặn trường hợp để nguyên placeholder/token rỗng trước khi gọi Discord API."""
+    if not token:
+        return False
+    lowered = token.lower()
+    return lowered not in {"your_bot_token_here", "token", "discord_token"}
+
+
 async def main():
-    if not TOKEN:
-        print(f"{e('error')} Không tìm thấy DISCORD_TOKEN. Hãy tạo file .env dựa theo .env.example rồi điền token vào.")
+    if not _has_valid_token_format(TOKEN):
+        print(f"{e('error')} DISCORD_TOKEN chưa set hoặc vẫn là placeholder. Hãy tạo file .env từ .env.example rồi điền token bot thật của riêng bạn.")
         return
 
     _check_owner_id()
