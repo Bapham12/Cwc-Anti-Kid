@@ -136,15 +136,16 @@ mod-bot-v1/
 ## 🔧 Bước 1: Tạo bot trên Discord Developer Portal
 
 1. Vào https://discord.com/developers/applications → **New Application**
-2. Vào tab **Bot** → bấm **Reset Token** để lấy token → lưu lại
-3. Bật 2 intent bắt buộc trong tab Bot:
+2. Vào tab **Bot** → bấm **Reset Token** để lấy token → lưu lại. Token này phải đặt vào biến `DISCORD_TOKEN` trong `.env`/Secret, **không commit token thật lên repo**.
+3. Lấy UID owner: bật Developer Mode trong Discord (User Settings → Advanced), chuột phải tài khoản owner → **Copy User ID**, rồi đặt vào `BOT_OWNER_ID`. Các lệnh nguy hiểm như `.globalban`, `.lockall`, `bridgefilter` chỉ chạy khi UID người gọi khớp đúng biến này.
+4. Bật 2 intent bắt buộc trong tab Bot:
    - `MESSAGE CONTENT INTENT`
    - `SERVER MEMBERS INTENT`
-4. Vào tab **OAuth2 → URL Generator**:
+5. Vào tab **OAuth2 → URL Generator**:
    - Scopes: `bot`, `applications.commands`
    - Bot Permissions: `Kick Members`, `Ban Members`, `Moderate Members`, `Manage Messages`, `Manage Channels`, `Manage Webhooks` (dùng cho cầu nối chat), `Manage Server` (để auto-lock verification level khi có raid), `Send Messages`, `Read Message History`
    - Copy link → mở link đó để mời bot vào server
-5. (Tuỳ chọn) Vào tab **Emoji** để upload sẵn emoji gif cho bot — xem phần "Emoji tự động lấy từ Developer Portal" bên dưới
+6. (Tuỳ chọn) Vào tab **Emoji** để upload sẵn emoji gif cho bot — xem phần "Emoji tự động lấy từ Developer Portal" bên dưới
 
 ## 🚀 Bước 2: Chạy bot
 
@@ -155,14 +156,14 @@ pkg update && pkg install python git -y
 cd mod-bot-v1
 pip install -r requirements.txt
 cp .env.example .env
-nano .env    # điền DISCORD_TOKEN vào rồi Ctrl+X, Y, Enter để lưu
+nano .env    # điền DISCORD_TOKEN và BOT_OWNER_ID rồi Ctrl+X, Y, Enter để lưu
 python bot.py
 ```
 
 ### GitHub Codespaces
 
 1. Tạo repo mới trên GitHub, upload toàn bộ thư mục này lên
-2. Vào repo → **Settings → Secrets and variables → Codespaces** → thêm secret tên `DISCORD_TOKEN` với giá trị là token bot
+2. Vào repo → **Settings → Secrets and variables → Codespaces** → thêm secret `DISCORD_TOKEN` với token bot và `BOT_OWNER_ID` với UID owner Discord
 3. Mở Codespace, trong terminal chạy:
    ```bash
    pip install -r requirements.txt
@@ -170,7 +171,7 @@ python bot.py
    ```
    Codespaces sẽ tự đưa secret vào biến môi trường, nhưng vì `bot.py` đọc qua `.env` bằng `python-dotenv`, bạn có thể thêm dòng sau vào đầu terminal nếu secret không tự nhận:
    ```bash
-   echo "DISCORD_TOKEN=$DISCORD_TOKEN" > .env
+   { echo "DISCORD_TOKEN=$DISCORD_TOKEN"; echo "BOT_OWNER_ID=$BOT_OWNER_ID"; } > .env
    python bot.py
    ```
 4. Lưu ý: Codespaces free tier không chạy 24/7, bot sẽ tắt khi hết giờ hoặc đóng tab.
@@ -181,9 +182,16 @@ python bot.py
 cd mod-bot-v1
 pip install -r requirements.txt
 copy .env.example .env
-notepad .env
+notepad .env    # điền DISCORD_TOKEN và BOT_OWNER_ID
 python bot.py
 ```
+
+## 🔐 Cấu hình Token & Owner UID
+
+- `.env.example` chỉ chứa tên biến và giá trị trống/placeholder an toàn. Sau khi fork hoặc clone, hãy copy sang `.env` rồi điền token/UID thật ở máy hoặc trong Secret của môi trường chạy.
+- `DISCORD_TOKEN` là token của bot Discord của bạn. Nếu để trống hoặc giữ placeholder, bot sẽ dừng trước khi gọi Discord API.
+- `BOT_OWNER_ID` phải là chuỗi số UID Discord thuần của owner. Repo không nên hard-code UID của chủ cũ; mỗi người fork cần đặt UID của mình trong `.env`/Secret.
+- `NORMAL_PREFIX` mặc định là `!`, còn `OWNER_PREFIX` mặc định là `.`. Các lệnh owner-only vẫn bị kiểm tra bằng `BOT_OWNER_ID`, không chỉ dựa vào prefix.
 
 ## ⚙️ Ghi chú về Slash Command
 
