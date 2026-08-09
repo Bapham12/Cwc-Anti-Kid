@@ -33,14 +33,13 @@ def _parse_owner_id() -> int | None:
     if len(cleaned) >= 2 and cleaned[0] in "\"'" and cleaned[-1] in "\"'":
         cleaned = cleaned[1:-1].strip()
 
-    # Chỉ giữ lại chữ số, phòng trường hợp dính khoảng trắng/ký tự ẩn ở giữa
-    # (VD: copy từ mobile hay kèm theo ký tự xuống dòng ẩn \r)
-    digits_only = "".join(ch for ch in cleaned if ch.isdigit())
-    if not digits_only:
+    # Discord snowflake chỉ nên là chuỗi số thuần. Không tự nhặt số từ chuỗi lẫn
+    # chữ (VD: "abc123") vì dễ che giấu việc cấu hình sai UID.
+    if not cleaned.isdigit():
         return None
 
     try:
-        return int(digits_only)
+        return int(cleaned)
     except ValueError:
         return None
 
